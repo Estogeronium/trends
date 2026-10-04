@@ -95,21 +95,10 @@
         background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px;
         box-shadow: 0 1px 0 rgba(20,20,45,0.04), 0 12px 30px -18px rgba(20,20,45,0.25);
       }
-      .lcd { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+      .lcd { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .lcd div { background: #14141b; color: #e8e8ee; border-radius: 10px; padding: 10px 12px; }
-      .lcd b { display: block; font-family: var(--mono); font-weight: 500; font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; color: #9dffb9; }
+      .lcd b { display: block; font-family: var(--mono); font-weight: 500; font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; color: #9dffb9; }
       .lcd span { font-family: var(--mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #8a8a99; }
-      .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-      .pad {
-        aspect-ratio: 1; border: 1px solid var(--line-2); border-radius: 12px; background: #fafafc;
-        display: flex; align-items: center; justify-content: center; position: relative; text-decoration: none;
-        transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
-        box-shadow: 0 2px 0 rgba(20,20,45,0.12);
-      }
-      .pad:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 3px 0 rgba(20,20,45,0.16); }
-      .pad:active { transform: translateY(1px); box-shadow: 0 0 0 rgba(0,0,0,0); }
-      .pad i { position: absolute; left: 7px; top: 5px; font-style: normal; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
-      .pad svg { width: 62%; height: 62%; }
 
       /* section heads */
       section { padding: 44px 0 8px; }
@@ -128,6 +117,7 @@
       .tile:hover { transform: translateY(-2px); border-color: var(--line-2); }
       .tile.l { grid-column: span 2; grid-row: span 2; }
       .tile .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+      .tile:not(.l) .row { justify-content: flex-start; }
       .tile svg.g { width: 38px; height: 38px; flex: none; }
       .tile.l svg.g { width: 64px; height: 64px; }
       .tile h3 { font-size: 14.5px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.25; margin-top: 10px; text-wrap: balance; }
@@ -179,13 +169,12 @@
       .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
       .card h4 { font-size: 14.5px; font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; text-wrap: balance; }
       .card p { font-size: 13.5px; color: var(--ink-2); text-wrap: pretty; }
-      .card .ev { font-size: 12.5px; background: #f7f7fa; border-left: 3px solid var(--gc); border-radius: 4px 8px 8px 4px; padding: 7px 10px; color: var(--ink); }
+      .card .ev { font-size: 12.5px; background: #f7f7fa; border-radius: 8px; padding: 8px 10px; color: var(--ink); }
       .card .ev span { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
-      .card .foot { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-      .src { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em; background: #ececf2; border-radius: 5px; padding: 2px 6px; }
-      .hz { display: inline-flex; gap: 3px; align-items: center; font-family: var(--mono); font-size: 10px; color: var(--muted); }
-      .hz i { width: 6px; height: 6px; border-radius: 50%; background: rgba(20,20,45,0.14); }
-      .hz i.on { background: var(--ink); }
+      .card .foot { margin-top: auto; padding-top: 6px; }
+      .sub { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+      @media (hover: hover) { .sub { opacity: 0; transition: opacity 0.15s; } .card:hover .sub, .card:focus-within .sub { opacity: 1; } }
+      .src { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em; color: var(--muted); }
       .st { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
       .tags { display: flex; gap: 4px; flex-wrap: wrap; }
       .tag { font-size: 11px; color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 4px; padding: 0 5px; background: transparent; }
@@ -286,7 +275,6 @@
             <div><b id="s-s">0</b><span>отчётов</span></div>
             <div><b id="s-c">0</b><span>паттернов</span></div>
           </div>
-          <div class="pads" id="pads"></div>
         </div>
       </header>
 
@@ -408,20 +396,9 @@
           var s = ""; for (var i = 0; i < 9; i++) s += '<s class="' + (i < n ? "on" : "") + '"></s>';
           return '<span class="meter" role="img" aria-label="Источников: ' + n + ' из 9">' + s + "</span>";
         }
-        function hz(h) {
-          var n = HZI[h] || 1, s = "";
-          for (var i = 0; i < 3; i++) s += '<i class="' + (i < n ? "on" : "") + '"></i>';
-          return '<span class="hz" title="Горизонт: ' + esc(HZ[h] || h) + '">' + s + "&nbsp;" + esc(HZ[h] || h) + "</span>";
-        }
-
         // ---------- hero ----------
         $("upd").textContent = D.updated;
         $("s-t").textContent = D.stats.trends; $("s-s").textContent = D.stats.sources; $("s-c").textContent = D.stats.clusters;
-        D.clusters.forEach(function (c) {
-          var a = el("a", "pad", '<i>' + pad(c.n) + "</i>" + glyph(c));
-          a.href = "#c-" + c.id; a.title = c.name; a.setAttribute("aria-label", c.name);
-          $("pads").appendChild(a);
-        });
 
         // ---------- bento ----------
         D.clusters.forEach(function (c, i) {
@@ -429,13 +406,13 @@
           var a = el("a", "tile" + (large ? " l" : ""));
           a.href = "#c-" + c.id; a.style.setProperty("--gc", G[c.g].color);
           a.innerHTML =
-            '<div><div class="row">' + glyph(c) + '<span class="label">' + pad(c.n) + " · " + esc(G[c.g].name) + "</span></div>" +
+            '<div><div class="row">' + (large ? glyph(c) : "") + '<span class="label">' + pad(c.n) + " · " + esc(G[c.g].name) + "</span></div>" +
             "<h3>" + esc(c.name) + '</h3><p class="ln">' + esc(c.line) + "</p></div>" +
             '<div class="ft"><span class="n">' + c.count + " " + plural(c.count, "тренд", "тренда", "трендов") + "</span>" +
             '<span style="--gc:' + G[c.g].color + '">' + meter(c.sources.length) + "</span></div>";
           $("bento").appendChild(a);
           if (i === 3) {
-            var t = el("div", "tile info", '<p><b>Как читать.</b> Цвет — режим, фигуры — фирменный знак паттерна, шкала — сколько отчётов видят то же самое.</p>');
+            var t = el("div", "tile info", '<p><b>Как читать.</b> Цвет — режим, шкала — сколько из девяти отчётов видят то же самое. Крупные плитки — самые наполненные паттерны.</p>');
             $("bento").appendChild(t);
           }
         });
@@ -498,9 +475,9 @@
           a.innerHTML =
             "<h4>" + esc(t.t) + "</h4><p>" + esc(t.d) + "</p>" +
             (t.e ? '<div class="ev"><span>Данные</span>' + esc(t.e) + "</div>" : "") +
-            '<div class="foot"><span class="src" title="' + esc(t.s) + (t.p ? ", с. " + esc(t.p) : "") + '">' + esc(t.s) + (t.p ? " · с.&nbsp;" + esc(t.p) : "") + "</span>" +
-            hz(t.h) + '<span class="st">' + esc(ST[t.st] || "") + "</span></div>" +
-            (t.tg.length ? '<div class="tags">' + t.tg.map(function (x) { return '<button class="tag" data-tag="' + esc(x) + '" type="button">' + esc(x) + "</button>"; }).join("") + "</div>" : "");
+            '<div class="foot"><span class="src">' + esc(t.s) + (t.p ? " · с.&nbsp;" + esc(t.p) : "") + " · " + esc(HZ[t.h] || t.h) + "</span></div>" +
+            '<div class="sub"><span class="st">' + esc(ST[t.st] || "") + "</span>" +
+            t.tg.map(function (x) { return '<button class="tag" data-tag="' + esc(x) + '" type="button">' + esc(x) + "</button>"; }).join("") + "</div>";
           return a;
         }
 
